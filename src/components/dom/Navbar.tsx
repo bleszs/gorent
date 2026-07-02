@@ -13,6 +13,21 @@ const LINKS = [
 export default function Navbar() {
   const isLoaded = useAppStore((s) => s.isLoaded);
 
+  // Anchor mulus via Lenis (offset agar tak tertutup navbar); fallback ke native
+  const handleNav = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    const lenis = useAppStore.getState().lenis;
+    if (!lenis) return; // biarkan native jump
+    e.preventDefault();
+    lenis.scrollTo(href, {
+      offset: -90,
+      duration: 1.6,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo.out
+    });
+  };
+
   return (
     <motion.header
       initial={{ y: -120 }}
@@ -24,6 +39,7 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href="#hero"
+          onClick={(e) => handleNav(e, "#hero")}
           className="font-display text-xl font-bold tracking-tighter text-white transition-opacity duration-500 hover:opacity-70"
         >
           GORENT
@@ -35,6 +51,7 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNav(e, link.href)}
               className="font-ui text-sm text-white/70 transition-colors duration-500 ease-out hover:text-white"
             >
               {link.label}

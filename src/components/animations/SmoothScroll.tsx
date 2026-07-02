@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useAppStore } from "@/store/useAppStore";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,9 +32,13 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
+    // Bagikan instance agar Navbar bisa scrollTo() dengan inertia yang sama
+    useAppStore.getState().setLenis(lenis);
+
     return () => {
       gsap.ticker.remove(raf);
       lenis.destroy();
+      useAppStore.getState().setLenis(null);
     };
   }, []);
 
