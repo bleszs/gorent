@@ -1,7 +1,10 @@
 import GlobalCanvas from "@/components/canvas/GlobalCanvas";
 import CTAScene from "@/components/canvas/CTAScene";
 import SceneScrollTriggers from "@/components/animations/SceneScrollTriggers";
+import LoadingScreen from "@/components/dom/LoadingScreen";
+import Navbar from "@/components/dom/Navbar";
 import HeroUI from "@/components/dom/HeroUI";
+import HeroDragLayer from "@/components/dom/HeroDragLayer";
 import Storytelling from "@/components/dom/Storytelling";
 import FleetUI from "@/components/dom/FleetUI";
 import WhyChooseUs from "@/components/dom/WhyChooseUs";
@@ -17,6 +20,10 @@ import Footer from "@/components/dom/Footer";
 export default function Home() {
   return (
     <main className="relative w-full">
+      {/* Loading screen & Navbar khusus landing (tidak ikut ke /book) */}
+      <LoadingScreen />
+      <Navbar />
+
       {/* ── Layer 3D: satu Global Canvas, fixed, full-screen, di bawah (z-0) ── */}
       <div className="fixed inset-0 z-0">
         <GlobalCanvas />
@@ -25,12 +32,16 @@ export default function Home() {
       {/* Controller scroll→canvas (render null, tidak tampak) */}
       <SceneScrollTriggers />
 
-      {/* ── Layer DOM overlay: di atas (z-10) ── */}
-      <div className="relative z-10">
+      {/* ── Layer DOM overlay (z-10) ──
+          pointer-events-none di root → canvas menerima event di area #fleet (klik model 3D
+          & parallax). Interaksi di-re-enable per-blok: hero, kartu Fleet, & blok konten bawah. */}
+      <div className="pointer-events-none relative z-10">
         <section
           id="hero"
-          className="relative flex min-h-screen w-full items-center"
+          className="pointer-events-auto relative flex min-h-screen w-full items-center"
         >
+          {/* Penangkap drag 360° (di bawah teks/tombol Hero) */}
+          <HeroDragLayer />
           <HeroUI />
         </section>
 
@@ -41,8 +52,9 @@ export default function Home() {
         </section>
 
         {/* Konten padat duduk di atas backdrop hitam solid; gradient memudarkan
-            transisi dari panggung 3D Fleet agar carousel tak mengganggu di baliknya */}
-        <div className="relative bg-black">
+            transisi dari panggung 3D Fleet agar carousel tak mengganggu di baliknya.
+            pointer-events-auto → seluruh interaksi section bawah kembali normal. */}
+        <div className="pointer-events-auto relative bg-black">
           <div className="pointer-events-none absolute inset-x-0 -top-48 h-48 bg-gradient-to-b from-transparent to-black" />
 
           <section id="why" className="relative w-full py-32 md:py-48">

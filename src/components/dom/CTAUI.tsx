@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Magnetic from "@/components/animations/Magnetic";
+import { useBookingStore } from "@/store/useBookingStore";
 
 const reveal = {
   hidden: { opacity: 0, y: 40 },
@@ -13,6 +15,8 @@ const reveal = {
 };
 
 export default function CTAUI() {
+  const startBooking = useBookingStore((s) => s.startBooking);
+
   return (
     <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
       <motion.p
@@ -50,12 +54,16 @@ export default function CTAUI() {
         className="mt-12"
       >
         <Magnetic className="inline-block" strength={0.5}>
-          <button className="group inline-flex items-center gap-3 rounded-full bg-white px-10 py-5 font-ui text-sm font-semibold uppercase tracking-widest text-black transition-all duration-500 ease-out hover:bg-luxury-gold hover:shadow-[0_0_60px_-10px_rgba(212,175,55,0.6)]">
+          <Link
+            href="/book"
+            onClick={() => startBooking()}
+            className="group inline-flex items-center gap-3 rounded-full bg-white px-10 py-5 font-ui text-sm font-semibold uppercase tracking-widest text-black transition-all duration-500 ease-out hover:bg-luxury-gold hover:shadow-[0_0_60px_-10px_rgba(212,175,55,0.6)]"
+          >
             Book Your Ride
             <span className="transition-transform duration-500 ease-out group-hover:translate-x-1">
               →
             </span>
-          </button>
+          </Link>
         </Magnetic>
       </motion.div>
     </div>

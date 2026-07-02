@@ -8,29 +8,26 @@ import type { Group } from "three";
 import { useSceneStore } from "@/store/useSceneStore";
 
 const MODEL_URL = "/models/car.glb";
-const HERO_MODEL_SCALE = 3; // ukuran akhir (unit dunia) SETELAH dinormalisasi Resize → tweak di sini
+const HERO_MODEL_SCALE = 4.4; // diperbesar agar mobil dominan ("full") → tweak di sini
 
-/**
- * Model kendaraan Hero (aset asli).
- * DRACO decoder diambil dari CDN gstatic (arg `true`) — tak perlu file lokal.
- * Ganti `true` → "/draco/" bila kamu menaruh decoder di public/draco/.
- */
 function CarModel() {
-  const { scene } = useGLTF(MODEL_URL, true);
+  const { scene } = useGLTF(MODEL_URL, true); // true = DRACO via CDN
   return <primitive object={scene} />;
 }
-// Pra-muat lewat loading manager → LoadingScreen (useProgress) menghitung bobot model.
 useGLTF.preload(MODEL_URL, true);
 
 function HeroObject() {
-  const groupRef = useRef<Group>(null); // fly-away saat scroll
-  const modelRef = useRef<Group>(null); // rotasi kontinu
+  const groupRef = useRef<Group>(null); // fly-away saat scroll (posisi + skala)
+  const modelRef = useRef<Group>(null); // rotasi (idle spin + drag pengguna)
+  const idleSpin = useRef(0);
 
   useFrame((_, delta) => {
-    const { heroProgress } = useSceneStore.getState();
+    const { heroProgress, heroRotation } = useSceneStore.getState();
 
     if (modelRef.current) {
-      modelRef.current.rotation.y += delta * 0.3; // spin sinematik (frame-rate independent)
+      idleSpin.current += delta * 0.15; // spin lembut saat idle
+      // rotasi total = spin idle + offset drag pengguna (dari HeroDragLayer)
+      modelRef.current.rotation.y = idleSpin.current + heroRotation;
     }
 
     if (groupRef.current) {
@@ -44,10 +41,9 @@ function HeroObject() {
 
   return (
     <group ref={groupRef}>
-      <Float speed={1.4} rotationIntensity={0.35} floatIntensity={0.8}>
-        {/* modelRef: pivot rotasi. Center+Resize → apa pun native origin/ukuran model,
-            hasilnya ternormalisasi & terpusat di titik nol. */}
+      <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.6}>
         <group ref={modelRef} scale={HERO_MODEL_SCALE}>
+          {/* Center + Resize → normalisasi ukuran/pivot model apa pun */}
           <Center>
             <Resize>
               <CarModel />

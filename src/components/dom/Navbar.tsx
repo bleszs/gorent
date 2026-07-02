@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
+import { useBookingStore } from "@/store/useBookingStore";
 import Magnetic from "@/components/animations/Magnetic";
 
 const LINKS = [
@@ -12,6 +14,7 @@ const LINKS = [
 
 export default function Navbar() {
   const isLoaded = useAppStore((s) => s.isLoaded);
+  const startBooking = useBookingStore((s) => s.startBooking);
 
   // Anchor mulus via Lenis (offset agar tak tertutup navbar); fallback ke native
   const handleNav = (
@@ -61,9 +64,13 @@ export default function Navbar() {
 
         {/* CTA magnetic */}
         <Magnetic className="inline-block" strength={0.5}>
-          <button className="rounded-full bg-white px-6 py-3 font-ui text-sm font-semibold uppercase tracking-widest text-black transition-all duration-500 ease-out hover:bg-luxury-gold hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.6)]">
+          <Link
+            href="/book"
+            onClick={() => startBooking()}
+            className="inline-block rounded-full bg-white px-6 py-3 font-ui text-sm font-semibold uppercase tracking-widest text-black transition-all duration-500 ease-out hover:bg-luxury-gold hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.6)]"
+          >
             Rent Now
-          </button>
+          </Link>
         </Magnetic>
       </div>
     </motion.header>
