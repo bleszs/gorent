@@ -30,3 +30,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backup aset mentah (versi terkompresi ada di public/models/)
+*.glb.original

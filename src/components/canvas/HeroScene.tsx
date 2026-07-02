@@ -2,47 +2,35 @@
 
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float, RoundedBox /* , useGLTF */ } from "@react-three/drei";
+import { Float, Center, Resize, useGLTF } from "@react-three/drei";
 import { MathUtils } from "three";
-import type { Group, Mesh } from "three";
+import type { Group } from "three";
 import { useSceneStore } from "@/store/useSceneStore";
 
-/* ────────────────────────────────────────────────────────────────
- * SWAP KE MODEL .glb ASLI (saat aset final sudah di public/models/)
- *
- * 1. Taruh file: public/models/car.glb  (WAJIB terkompresi DRACO)
- * 2. (Draco lokal) taruh decoder di: public/draco/  → dari node_modules/
- *    three/examples/jsm/libs/draco/ . Atau pakai `true` untuk CDN gstatic.
- * 3. Uncomment blok di bawah + ganti <RoundedBox…/> di HeroObject dengan <CarModel />.
- *
- * function CarModel() {
- *   // arg ke-2: "/draco/" = path decoder lokal | true = CDN | false = tanpa draco
- *   const { scene } = useGLTF("/models/car.glb", "/draco/");
- *   return <primitive object={scene} scale={1.4} />;
- * }
- * // Pra-muat agar LoadingScreen (useProgress) menghitungnya:
- * useGLTF.preload("/models/car.glb", "/draco/");
- * ──────────────────────────────────────────────────────────────── */
+const MODEL_URL = "/models/car.glb";
+const HERO_MODEL_SCALE = 3; // ukuran akhir (unit dunia) SETELAH dinormalisasi Resize → tweak di sini
 
 /**
- * PLACEHOLDER kendaraan Hero (belum ada asset .glb).
- * - meshRef: rotasi kontinu halus (useFrame).
- * - groupRef: "terbang" naik & mengecil saat Hero di-scroll keluar (heroProgress),
- *   sehingga panggung kosong saat Storytelling & memberi ruang untuk Fleet.
- *
- * Catatan: komponen ini TIDAK memiliki <Canvas> sendiri — ia dirender
- * di dalam GlobalCanvas (satu WebGL context untuk seluruh halaman).
+ * Model kendaraan Hero (aset asli).
+ * DRACO decoder diambil dari CDN gstatic (arg `true`) — tak perlu file lokal.
+ * Ganti `true` → "/draco/" bila kamu menaruh decoder di public/draco/.
  */
-export default function HeroScene() {
-  const groupRef = useRef<Group>(null);
-  const meshRef = useRef<Mesh>(null);
+function CarModel() {
+  const { scene } = useGLTF(MODEL_URL, true);
+  return <primitive object={scene} />;
+}
+// Pra-muat lewat loading manager → LoadingScreen (useProgress) menghitung bobot model.
+useGLTF.preload(MODEL_URL, true);
+
+function HeroObject() {
+  const groupRef = useRef<Group>(null); // fly-away saat scroll
+  const modelRef = useRef<Group>(null); // rotasi kontinu
 
   useFrame((_, delta) => {
     const { heroProgress } = useSceneStore.getState();
 
-    if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.3; // frame-rate independent
-      meshRef.current.rotation.x += delta * 0.05;
+    if (modelRef.current) {
+      modelRef.current.rotation.y += delta * 0.3; // spin sinematik (frame-rate independent)
     }
 
     if (groupRef.current) {
@@ -57,17 +45,20 @@ export default function HeroScene() {
   return (
     <group ref={groupRef}>
       <Float speed={1.4} rotationIntensity={0.35} floatIntensity={0.8}>
-        {/* ⬇️ GANTI RoundedBox ini dengan <CarModel /> saat .glb siap.
-            (meshRef dipindah ke <primitive ref={meshRef} …> agar rotasi tetap jalan) */}
-        <RoundedBox ref={meshRef} args={[2.4, 2.4, 2.4]} radius={0.32} smoothness={8}>
-          <meshStandardMaterial
-            color="#0b0d12"
-            metalness={1}
-            roughness={0.12}
-            envMapIntensity={1.6}
-          />
-        </RoundedBox>
+        {/* modelRef: pivot rotasi. Center+Resize → apa pun native origin/ukuran model,
+            hasilnya ternormalisasi & terpusat di titik nol. */}
+        <group ref={modelRef} scale={HERO_MODEL_SCALE}>
+          <Center>
+            <Resize>
+              <CarModel />
+            </Resize>
+          </Center>
+        </group>
       </Float>
     </group>
   );
+}
+
+export default function HeroScene() {
+  return <HeroObject />;
 }
