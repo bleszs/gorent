@@ -62,8 +62,16 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* CTA magnetic */}
-        <Magnetic className="inline-block" strength={0.5}>
+        {/* Profil + CTA magnetic */}
+        <div className="flex items-center gap-4">
+          <Link
+            href="/profile"
+            aria-label="Profile"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 font-display text-sm font-bold text-white/80 backdrop-blur-md transition-all duration-500 ease-out hover:border-luxury-gold/40 hover:text-white"
+          >
+            GS
+          </Link>
+          <Magnetic className="inline-block" strength={0.5}>
           <Link
             href="/book"
             onClick={() => startBooking()}
@@ -71,7 +79,8 @@ export default function Navbar() {
           >
             Rent Now
           </Link>
-        </Magnetic>
+          </Magnetic>
+        </div>
       </div>
     </motion.header>
   );

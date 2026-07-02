@@ -15,9 +15,11 @@ export default function Step3Confirm() {
   const returnDate = useBookingStore((s) => s.returnDate);
   const prevStep = useBookingStore((s) => s.prevStep);
   const reset = useBookingStore((s) => s.reset);
+  const confirmBooking = useBookingStore((s) => s.confirmBooking);
 
   const [confirmed, setConfirmed] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [bookedName, setBookedName] = useState<string | null>(null);
 
   const vehicle = getVehicle(selectedVehicle);
   const days =
@@ -47,8 +49,8 @@ export default function Step3Confirm() {
           Booking Confirmed
         </h2>
         <p className="mt-4 max-w-md font-body text-white/50">
-          Your {vehicle?.name} is reserved. A concierge will reach out shortly
-          to finalize the details. Drive freedom.
+          Your {bookedName} is reserved. A concierge will reach out shortly to
+          finalize the details. Drive freedom.
         </p>
         <div className="mt-10 flex gap-4">
           <Link
@@ -123,6 +125,8 @@ export default function Step3Confirm() {
             amount={total}
             onClose={() => setShowPayment(false)}
             onSuccess={() => {
+              setBookedName(vehicle?.name ?? null); // snapshot sebelum reset
+              confirmBooking(); // rekam ke history + reset form
               setShowPayment(false);
               setConfirmed(true);
             }}
