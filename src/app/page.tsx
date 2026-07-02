@@ -3,6 +3,10 @@ import SceneScrollTriggers from "@/components/animations/SceneScrollTriggers";
 import HeroUI from "@/components/dom/HeroUI";
 import Storytelling from "@/components/dom/Storytelling";
 import FleetUI from "@/components/dom/FleetUI";
+import WhyChooseUs from "@/components/dom/WhyChooseUs";
+import BookingTimeline from "@/components/dom/BookingTimeline";
+import Gallery from "@/components/dom/Gallery";
+import Footer from "@/components/dom/Footer";
 
 export default function Home() {
   return (
@@ -29,6 +33,26 @@ export default function Home() {
         <section id="fleet" className="relative w-full py-32 md:py-48">
           <FleetUI />
         </section>
+
+        {/* Konten padat duduk di atas backdrop hitam solid; gradient memudarkan
+            transisi dari panggung 3D Fleet agar carousel tak mengganggu di baliknya */}
+        <div className="relative bg-black">
+          <div className="pointer-events-none absolute inset-x-0 -top-48 h-48 bg-gradient-to-b from-transparent to-black" />
+
+          <section id="why" className="relative w-full py-32 md:py-48">
+            <WhyChooseUs />
+          </section>
+
+          <section id="booking" className="relative w-full py-32 md:py-48">
+            <BookingTimeline />
+          </section>
+
+          <section id="gallery" className="relative w-full py-32 md:py-48">
+            <Gallery />
+          </section>
+
+          <Footer />
+        </div>
       </div>
     </main>
   );
