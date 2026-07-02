@@ -2,20 +2,44 @@
 
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Float } from "@react-three/drei";
+import { Float, Center, Resize, useGLTF } from "@react-three/drei";
 import { MathUtils } from "three";
 import type { Group } from "three";
 import { useSceneStore } from "@/store/useSceneStore";
 
-const ITEM_COUNT = 7; // sejajar dengan jumlah kendaraan di FleetUI
-const RADIUS = 3.4;
+const RADIUS = 3.4; // jari-jari lingkaran carousel
+const ITEM_SCALE = 1.4; // ukuran tiap model SETELAH dinormalisasi Resize → tweak di sini
 
 /**
- * PLACEHOLDER 3D carousel untuk section "Choose Your Ride".
- * - scale-in dari 0 mengikuti fleetProgress (muncul saat section masuk viewport).
- * - rotasi kontinu (spin) + tambahan rotasi dari scroll (fleetProgress).
- * - parallax tipis mengikuti posisi mouse (state.pointer -1..1), di-lerp.
+ * Urutan WAJIB sinkron dengan daftar di FleetUI.tsx.
+ * Ganti nama file sesuai aset yang kamu taruh di public/models/.
  */
+const FLEET_MODELS = [
+  "/models/suv.glb",
+  "/models/sedan.glb",
+  "/models/luxury.glb",
+  "/models/sports-car.glb",
+  "/models/scooter.glb",
+  "/models/sport-bike.glb",
+  "/models/adventure-bike.glb",
+];
+
+// Pra-muat semua → dihitung LoadingScreen (useProgress). true = DRACO via CDN gstatic.
+FLEET_MODELS.forEach((url) => useGLTF.preload(url, true));
+
+/** Satu model: hook useGLTF dipanggil per-instance (bukan di dalam loop). */
+function FleetModel({ url }: { url: string }) {
+  const { scene } = useGLTF(url, true);
+  // Center + Resize → apa pun native origin/ukuran model, jadi ternormalisasi & terpusat.
+  return (
+    <Center>
+      <Resize>
+        <primitive object={scene} />
+      </Resize>
+    </Center>
+  );
+}
+
 export default function FleetScene() {
   const groupRef = useRef<Group>(null);
   const spin = useRef(0); // akumulator rotasi kontinu (dipisah dari offset scroll)
@@ -47,21 +71,17 @@ export default function FleetScene() {
 
   return (
     <group ref={groupRef} scale={0}>
-      {Array.from({ length: ITEM_COUNT }).map((_, i) => {
-        const angle = (i / ITEM_COUNT) * Math.PI * 2;
+      {FLEET_MODELS.map((url, i) => {
+        const angle = (i / FLEET_MODELS.length) * Math.PI * 2;
         const x = Math.sin(angle) * RADIUS;
         const z = Math.cos(angle) * RADIUS;
         return (
-          <Float key={i} speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
-            <mesh position={[x, 0, z]} rotation={[0, angle, 0]}>
-              <boxGeometry args={[1.4, 0.55, 0.85]} />
-              <meshStandardMaterial
-                color="#111827"
-                metalness={0.9}
-                roughness={0.15}
-                envMapIntensity={1.4}
-              />
-            </mesh>
+          <Float key={url} speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
+            {/* rotation Y = angle → tiap kendaraan menghadap keluar dari pusat.
+                Jika ada model yang menghadap arah salah, tambah offset, mis. [0, angle + Math.PI, 0]. */}
+            <group position={[x, 0, z]} rotation={[0, angle, 0]} scale={ITEM_SCALE}>
+              <FleetModel url={url} />
+            </group>
           </Float>
         );
       })}
