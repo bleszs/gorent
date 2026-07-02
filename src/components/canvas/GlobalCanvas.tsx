@@ -6,12 +6,17 @@ import { Environment, ContactShadows } from "@react-three/drei";
 import CameraRig from "./CameraRig";
 import HeroScene from "./HeroScene";
 import FleetScene from "./FleetScene";
+import { useSceneStore } from "@/store/useSceneStore";
 
 /**
  * Satu-satunya <Canvas> di aplikasi (satu WebGL context = performa optimal).
  * Menampung seluruh objek 3D lintas-section: Hero, Fleet, dan kamera scroll-driven.
  */
 export default function GlobalCanvas() {
+  // Fleet (7 model, ~10 MB) hanya di-mount saat user mendekati section-nya →
+  // initial load hanya memuat mobil Hero + HDRI, bukan seluruh armada.
+  const showFleet = useSceneStore((s) => s.showFleet);
+
   return (
     <Canvas
       dpr={[1, 2]} // batasi pixel ratio → GPU aman di layar retina
@@ -31,7 +36,7 @@ export default function GlobalCanvas() {
         />
 
         <HeroScene />
-        <FleetScene />
+        {showFleet && <FleetScene />}
 
         {/* ContactShadows menggantikan real-time shadow demi performa */}
         <ContactShadows

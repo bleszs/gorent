@@ -13,8 +13,9 @@ import { FLEET } from "@/data/fleet";
 const RADIUS = 3.4; // jari-jari lingkaran carousel
 const ITEM_SCALE = 1.4; // ukuran tiap model SETELAH dinormalisasi Resize → tweak di sini
 
-// Pra-muat semua model → dihitung LoadingScreen (useProgress). true = DRACO via CDN.
-FLEET.forEach((v) => useGLTF.preload(v.model, true));
+// CATATAN PERFORMA: TIDAK ada useGLTF.preload di sini. Komponen ini hanya di-render
+// oleh GlobalCanvas saat `showFleet` true (user mendekati section Fleet), jadi ke-7
+// model (~10 MB) baru di-fetch & di-decode saat dibutuhkan — bukan saat initial load.
 
 /** Satu model: hook useGLTF dipanggil per-instance (bukan di dalam loop). */
 function FleetModel({ url }: { url: string }) {

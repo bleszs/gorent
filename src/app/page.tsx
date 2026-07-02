@@ -1,5 +1,6 @@
+import dynamic from "next/dynamic";
 import GlobalCanvas from "@/components/canvas/GlobalCanvas";
-import CTAScene from "@/components/canvas/CTAScene";
+import CTASceneLazy from "@/components/canvas/CTASceneLazy";
 import SceneScrollTriggers from "@/components/animations/SceneScrollTriggers";
 import LoadingScreen from "@/components/dom/LoadingScreen";
 import Navbar from "@/components/dom/Navbar";
@@ -9,13 +10,38 @@ import Storytelling from "@/components/dom/Storytelling";
 import FleetUI from "@/components/dom/FleetUI";
 import WhyChooseUs from "@/components/dom/WhyChooseUs";
 import BookingTimeline from "@/components/dom/BookingTimeline";
-import Destinations from "@/components/dom/Destinations";
-import Testimonials from "@/components/dom/Testimonials";
-import Statistics from "@/components/dom/Statistics";
-import Gallery from "@/components/dom/Gallery";
 import FAQ from "@/components/dom/FAQ";
 import CTAUI from "@/components/dom/CTAUI";
 import Footer from "@/components/dom/Footer";
+
+// Placeholder dengan tinggi ~menyerupai section → cegah layout shift saat chunk dimuat.
+function SectionSkeleton() {
+  return (
+    <div className="mx-auto w-full max-w-7xl px-6 md:px-10">
+      <div className="h-4 w-40 animate-pulse rounded-full bg-white/5" />
+      <div className="mt-6 h-14 w-[28rem] max-w-full animate-pulse rounded-2xl bg-white/5" />
+      <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="h-64 animate-pulse rounded-2xl bg-white/5" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Below-the-fold: code-split (ssr tetap true → tetap ter-render server, no shift) ──
+const Destinations = dynamic(() => import("@/components/dom/Destinations"), {
+  loading: () => <SectionSkeleton />,
+});
+const Testimonials = dynamic(() => import("@/components/dom/Testimonials"), {
+  loading: () => <SectionSkeleton />,
+});
+const Statistics = dynamic(() => import("@/components/dom/Statistics"), {
+  loading: () => <SectionSkeleton />,
+});
+const Gallery = dynamic(() => import("@/components/dom/Gallery"), {
+  loading: () => <SectionSkeleton />,
+});
 
 export default function Home() {
   return (
@@ -89,9 +115,9 @@ export default function Home() {
             id="cta"
             className="relative flex min-h-screen w-full items-center justify-center overflow-hidden py-32"
           >
-            {/* Canvas partikel lokal di belakang teks CTA */}
+            {/* Canvas partikel lokal di belakang teks CTA (lazy, ssr:false) */}
             <div className="pointer-events-none absolute inset-0">
-              <CTAScene />
+              <CTASceneLazy />
             </div>
             <CTAUI />
           </section>

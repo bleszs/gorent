@@ -68,7 +68,7 @@ export default function Footer() {
               <a
                 key={link}
                 href="#"
-                className="font-ui text-sm text-white/40 transition-colors duration-500 ease-out hover:text-luxury-gold"
+                className="font-ui text-sm text-white/60 transition-colors duration-500 ease-out hover:text-luxury-gold"
               >
                 {link}
               </a>
@@ -76,7 +76,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        <p className="mt-12 font-ui text-xs uppercase tracking-widest text-white/30">
+        <p className="mt-12 font-ui text-xs uppercase tracking-widest text-white/55">
           © {new Date().getFullYear()} GORENT — Premium Car &amp; Motorcycle
           Rental. All rights reserved.
         </p>
