@@ -17,6 +17,31 @@ export interface BookingRecord {
 
 const DAY_MS = 86_400_000;
 
+// Riwayat dummy (masa lalu) → agar tab "Past History" tidak kosong saat demo.
+// Hanya di-seed bila history benar-benar kosong (lihat onRehydrateStorage).
+const SEED_HISTORY: BookingRecord[] = [
+  {
+    id: "GR-DEMO2K5",
+    vehicle: "Sports Car",
+    category: "Car",
+    pickupDate: "2026-03-14",
+    returnDate: "2026-03-18",
+    days: 4,
+    total: 14_000_000,
+    createdAt: "2026-03-12T09:20:00.000Z",
+  },
+  {
+    id: "GR-DEMO1L3",
+    vehicle: "Luxury",
+    category: "Car",
+    pickupDate: "2026-05-08",
+    returnDate: "2026-05-11",
+    days: 3,
+    total: 7_500_000,
+    createdAt: "2026-05-06T14:05:00.000Z",
+  },
+];
+
 /**
  * State alur pemesanan, di-persist ke localStorage agar tak hilang saat refresh.
  *
@@ -111,7 +136,13 @@ export const useBookingStore = create<BookingState>()(
         bookingHistory: s.bookingHistory,
       }),
       onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
+        if (!state) return;
+        // Seed riwayat demo bila kosong (visit pertama), lalu tandai hydrated.
+        const seed = state.bookingHistory.length === 0;
+        useBookingStore.setState({
+          _hasHydrated: true,
+          ...(seed ? { bookingHistory: SEED_HISTORY } : {}),
+        });
       },
     },
   ),

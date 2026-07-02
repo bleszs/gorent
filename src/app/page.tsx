@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import GlobalCanvas from "@/components/canvas/GlobalCanvas";
+import DeferredCanvas from "@/components/canvas/DeferredCanvas";
 import CTASceneLazy from "@/components/canvas/CTASceneLazy";
 import SceneScrollTriggers from "@/components/animations/SceneScrollTriggers";
 import LoadingScreen from "@/components/dom/LoadingScreen";
@@ -50,9 +50,9 @@ export default function Home() {
       <LoadingScreen />
       <Navbar />
 
-      {/* ── Layer 3D: satu Global Canvas, fixed, full-screen, di bawah (z-0) ── */}
+      {/* ── Layer 3D: di-defer sampai setelah LCP (fade-in), fixed z-0 ── */}
       <div className="fixed inset-0 z-0">
-        <GlobalCanvas />
+        <DeferredCanvas />
       </div>
 
       {/* Controller scroll→canvas (render null, tidak tampak) */}

@@ -2,34 +2,42 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useProgress } from "@react-three/drei";
 import { useAppStore } from "@/store/useAppStore";
 
 /**
- * Tirai loading global.
- * - useProgress (drei) melacak pemuatan aset 3D (mis. HDRI Environment) via loading manager.
- * - Saat 100%, tahan sejenak lalu geser tirai ke atas → page reveal sinematik.
- * - Fallback timeout menjaga tirai tidak macet bila tak ada aset yang terdaftar.
+ * Tirai loading sinematik — self-driven (0→100 dalam ~1s) lalu tergeser naik.
+ *
+ * Sengaja TIDAK bergantung pada useProgress/3D: canvas kini di-defer (DeferredCanvas),
+ * jadi tirai harus lekas terangkat agar teks Hero (LCP) tampil cepat. Ini juga
+ * mencegah drei/three ikut ke bundle kritis awal.
  */
+const DURATION_MS = 1000;
+
 export default function LoadingScreen() {
-  const { progress } = useProgress();
   const [show, setShow] = useState(true);
+  const [percent, setPercent] = useState(0);
   const setLoaded = useAppStore((s) => s.setLoaded);
 
-  // Sembunyikan saat progres penuh (tahan ~700ms untuk beat dramatis)
   useEffect(() => {
-    if (progress < 100) return;
-    const t = setTimeout(() => setShow(false), 700);
-    return () => clearTimeout(t);
-  }, [progress]);
+    let raf = 0;
+    const start = performance.now();
 
-  // Fallback: paksa reveal maksimal 6s (mis. aset ter-cache / tak ada loader)
-  useEffect(() => {
-    const t = setTimeout(() => setShow(false), 6000);
-    return () => clearTimeout(t);
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / DURATION_MS);
+      setPercent(Math.round(p * 100));
+      if (p < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = 0;
+        setTimeout(() => setShow(false), 250); // beat dramatis
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
-
-  const percent = Math.min(100, Math.round(progress));
 
   return (
     <AnimatePresence onExitComplete={setLoaded}>
@@ -49,7 +57,6 @@ export default function LoadingScreen() {
             </span>
           </div>
 
-          {/* Garis progres tipis */}
           <div className="mt-8 h-px w-56 overflow-hidden bg-white/10 md:w-80">
             <motion.div
               className="h-full origin-left bg-gradient-to-r from-electric-blue to-luxury-gold"
