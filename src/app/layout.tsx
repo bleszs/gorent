@@ -27,13 +27,15 @@ const inter = Inter({
 // mengubah path relatif OG/Twitter image menjadi URL absolut.
 const SITE_URL = "https://gorent-seven.vercel.app";
 
+// ≤125 karakter agar tak terpotong di preview sosial/mobile
 const DESCRIPTION =
-  "GORENT — sewa mobil & motor premium dengan pengalaman digital showroom sinematik. Booking cepat, asuransi termasuk, unlimited mileage.";
+  "Sewa mobil & motor premium dengan pengalaman showroom sinematik. Booking cepat, asuransi termasuk, unlimited mileage.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "GORENT — Drive Freedom",
+    // ~56 karakter → mengisi ruang SERP Google dengan baik (target 50–60)
+    default: "GORENT — Premium Car & Motorcycle Rental | Drive Freedom",
     template: "%s · GORENT",
   },
   description: DESCRIPTION,
