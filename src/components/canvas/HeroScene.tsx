@@ -1,79 +1,54 @@
 "use client";
 
-import { Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  Environment,
-  Float,
-  ContactShadows,
-  RoundedBox,
-} from "@react-three/drei";
-import type { Mesh } from "three";
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Float, RoundedBox } from "@react-three/drei";
+import { MathUtils } from "three";
+import type { Group, Mesh } from "three";
+import { useSceneStore } from "@/store/useSceneStore";
 
 /**
- * PLACEHOLDER kendaraan — belum ada asset .glb.
- * RoundedBox metalik-gelap + Environment "city" → kesan bodi mobil glossy.
+ * PLACEHOLDER kendaraan Hero (belum ada asset .glb).
+ * - meshRef: rotasi kontinu halus (useFrame).
+ * - groupRef: "terbang" naik & mengecil saat Hero di-scroll keluar (heroProgress),
+ *   sehingga panggung kosong saat Storytelling & memberi ruang untuk Fleet.
+ *
+ * Catatan: komponen ini TIDAK memiliki <Canvas> sendiri — ia dirender
+ * di dalam GlobalCanvas (satu WebGL context untuk seluruh halaman).
  */
-function HeroObject() {
-  const carMeshRef = useRef<Mesh>(null);
+export default function HeroScene() {
+  const groupRef = useRef<Group>(null);
+  const meshRef = useRef<Mesh>(null);
 
   useFrame((_, delta) => {
-    if (!carMeshRef.current) return;
-    // Rotasi kontinu halus (frame-rate independent via delta)
-    carMeshRef.current.rotation.y += delta * 0.3;
-    carMeshRef.current.rotation.x += delta * 0.05;
+    const { heroProgress } = useSceneStore.getState();
+
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.3; // frame-rate independent
+      meshRef.current.rotation.x += delta * 0.05;
+    }
+
+    if (groupRef.current) {
+      const targetY = heroProgress * 4; // terbang naik keluar frame
+      const targetScale = 1 - heroProgress * 0.85; // mengecil hingga ~0.15
+      groupRef.current.position.y = MathUtils.lerp(groupRef.current.position.y, targetY, 0.08);
+      const s = MathUtils.lerp(groupRef.current.scale.x, targetScale, 0.08);
+      groupRef.current.scale.setScalar(s);
+    }
   });
 
   return (
-    <Float speed={1.4} rotationIntensity={0.35} floatIntensity={0.8}>
-      <RoundedBox
-        ref={carMeshRef}
-        args={[2.4, 2.4, 2.4]}
-        radius={0.32}
-        smoothness={8}
-      >
-        <meshStandardMaterial
-          color="#0b0d12"
-          metalness={1}
-          roughness={0.12}
-          envMapIntensity={1.6}
-        />
-      </RoundedBox>
-    </Float>
-  );
-}
-
-export default function HeroScene() {
-  return (
-    <Canvas
-      dpr={[1, 2]} // batasi pixel ratio → GPU aman di layar retina
-      camera={{ position: [0, 0.6, 7], fov: 35 }}
-      gl={{ antialias: true }}
-    >
-      <Suspense fallback={null}>
-        <ambientLight intensity={0.35} />
-        <spotLight
-          position={[6, 9, 5]}
-          angle={0.3}
-          penumbra={1}
-          intensity={45}
-          color="#3b82f6"
-        />
-
-        <HeroObject />
-
-        {/* ContactShadows menggantikan real-time shadow demi performa */}
-        <ContactShadows
-          position={[0, -2.3, 0]}
-          opacity={0.5}
-          scale={14}
-          blur={3}
-          far={5}
-        />
-
-        {/* Pencahayaan studio realistis + refleksi untuk material metalik */}
-        <Environment preset="city" />
-      </Suspense>
-    </Canvas>
+    <group ref={groupRef}>
+      <Float speed={1.4} rotationIntensity={0.35} floatIntensity={0.8}>
+        <RoundedBox ref={meshRef} args={[2.4, 2.4, 2.4]} radius={0.32} smoothness={8}>
+          <meshStandardMaterial
+            color="#0b0d12"
+            metalness={1}
+            roughness={0.12}
+            envMapIntensity={1.6}
+          />
+        </RoundedBox>
+      </Float>
+    </group>
   );
 }
