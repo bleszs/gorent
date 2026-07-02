@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Plus_Jakarta_Sans, Inter } from "next/font/google";
 import SmoothScroll from "@/components/animations/SmoothScroll";
+import LoadingScreen from "@/components/dom/LoadingScreen";
+import Navbar from "@/components/dom/Navbar";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -35,7 +37,11 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jakarta.variable} ${inter.variable}`}
     >
       <body className="bg-black font-body text-white antialiased">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <LoadingScreen />
+          <Navbar />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

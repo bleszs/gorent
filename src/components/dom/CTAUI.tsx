@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Magnetic from "@/components/animations/Magnetic";
 
 const reveal = {
   hidden: { opacity: 0, y: 40 },
@@ -48,12 +49,14 @@ export default function CTAUI() {
         viewport={{ once: true }}
         className="mt-12"
       >
-        <button className="group inline-flex items-center gap-3 rounded-full bg-white px-10 py-5 font-ui text-sm font-semibold uppercase tracking-widest text-black transition-all duration-500 ease-out hover:bg-luxury-gold hover:shadow-[0_0_60px_-10px_rgba(212,175,55,0.6)]">
-          Book Your Ride
-          <span className="transition-transform duration-500 ease-out group-hover:translate-x-1">
-            →
-          </span>
-        </button>
+        <Magnetic className="inline-block" strength={0.5}>
+          <button className="group inline-flex items-center gap-3 rounded-full bg-white px-10 py-5 font-ui text-sm font-semibold uppercase tracking-widest text-black transition-all duration-500 ease-out hover:bg-luxury-gold hover:shadow-[0_0_60px_-10px_rgba(212,175,55,0.6)]">
+            Book Your Ride
+            <span className="transition-transform duration-500 ease-out group-hover:translate-x-1">
+              →
+            </span>
+          </button>
+        </Magnetic>
       </motion.div>
     </div>
   );

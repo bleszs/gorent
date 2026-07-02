@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import Magnetic from "@/components/animations/Magnetic";
 
 export default function HeroUI() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,12 +43,14 @@ export default function HeroUI() {
       </p>
 
       <div className="hero-cta mt-10">
-        <button className="group pointer-events-auto inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-8 py-4 font-ui text-sm uppercase tracking-widest text-white backdrop-blur-md transition-all duration-500 ease-out hover:border-luxury-gold/40 hover:bg-white/10">
-          Explore Fleet
-          <span className="transition-transform duration-500 ease-out group-hover:translate-x-1">
-            →
-          </span>
-        </button>
+        <Magnetic className="pointer-events-auto inline-block" strength={0.45}>
+          <button className="group inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-8 py-4 font-ui text-sm uppercase tracking-widest text-white backdrop-blur-md transition-all duration-500 ease-out hover:border-luxury-gold/40 hover:bg-white/10">
+            Explore Fleet
+            <span className="transition-transform duration-500 ease-out group-hover:translate-x-1">
+              →
+            </span>
+          </button>
+        </Magnetic>
       </div>
     </div>
   );
