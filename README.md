@@ -18,11 +18,11 @@ Drive Freedom. A next-generation rental experience built around emotional storyt
 
 ---
 
-## ✨ Overview
+##  Overview
 
 GORENT is a **dark‑luxury** landing + booking experience: a real 3D vehicle you can drag to spin 360°, a scroll‑driven camera, a 3D fleet carousel you can click to book, a multi‑step booking flow with a QRIS payment sandbox, and a persisted profile with booking history — all wrapped in a glassmorphism design system and tuned for performance.
 
-## 🎬 Features
+## Features
 
 - **Cinematic 3D hero** — real `.glb` model (DRACO‑compressed), drag to rotate 360°, scroll‑driven camera dolly & fly‑away.
 - **12 storytelling sections** — Hero → Storytelling (pinned scrub) → Fleet (3D carousel) → Why Choose Us (3D tilt cards) → Booking timeline → Destinations (parallax + floating pins) → Testimonials (infinite marquee) → Statistics (count‑up) → Gallery (masonry + parallax) → FAQ (accordion) → CTA (particles) → Footer.
@@ -31,7 +31,7 @@ GORENT is a **dark‑luxury** landing + booking experience: a real 3D vehicle yo
 - **Profile & history** (`/profile`) — glassmorphism dashboard, Active / Past tabs, booking history **persisted** across refresh.
 - **Cinematic loading curtain**, magnetic buttons, Lenis smooth inertia scroll, and dynamic SEO / Open Graph images.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Area | Tech |
 |---|---|
@@ -43,7 +43,7 @@ GORENT is a **dark‑luxury** landing + booking experience: a real 3D vehicle yo
 | State | **Zustand** (+ `persist` middleware) |
 | Deploy | **Vercel** |
 
-## 🧠 Architecture Highlights
+## Architecture Highlights
 
 A few deliberate engineering decisions that make it feel handcrafted:
 
@@ -54,7 +54,7 @@ A few deliberate engineering decisions that make it feel handcrafted:
 - **Performance‑first 3D** — DRACO‑compressed models (**car.glb 21 MB → 1.1 MB**, fleet **122 MB → 11 MB**), fleet models **lazy‑mounted** on scroll approach, and the whole three.js canvas **deferred past LCP** (`requestIdleCallback` + fade‑in) → home First‑Load JS **480 kB → 213 kB**.
 - **Dynamic SEO** — favicon, apple‑icon, and 1200×630 Open Graph image generated at the edge via `next/og`.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -75,7 +75,7 @@ src/
 public/models/              # DRACO-compressed .glb assets
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 **Prerequisites:** Node.js 18+ and **pnpm**.
 
@@ -101,20 +101,20 @@ pnpm dev                    # http://localhost:3000
 
 > **Note:** native build scripts (`sharp`, `unrs-resolver`) are allow‑listed in `pnpm-workspace.yaml`. 3D models use DRACO decoding via the gstatic CDN, so an internet connection is required in dev for the hero/fleet models and the studio HDRI.
 
-## 🎨 Design System
+## Design System
 
 - **Background:** solid black `#000` / deep slate `#0F172A`
 - **Accents:** electric blue `#3B82F6` · luxury gold `#D4AF37`
 - **Type:** Space Grotesk (display) · Plus Jakarta Sans (body) · Inter (UI)
 - **Motion:** `expo.out` / cubic `[0.16, 1, 0.3, 1]` easing, glassmorphism `bg-white/5 backdrop-blur-md border-white/10`
 
-## 📈 Performance
+## Performance
 
 - Home route First‑Load JS: **213 kB** (three.js deferred past LCP)
 - Lighthouse: **SEO 100 · Best Practices 100 · Accessibility 96+**
 - Layout shift (CLS): ~0.004
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] Cinematic landing (12 sections) + 3D hero
 - [x] 3D fleet carousel + click‑to‑book
@@ -125,7 +125,7 @@ pnpm dev                    # http://localhost:3000
 - [ ] Auth & real backend
 - [ ] Dark / light theme toggle
 
-## 📄 License
+## License
 
 This project is for portfolio / demonstration purposes.
 
