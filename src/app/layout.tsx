@@ -56,26 +56,15 @@ export const metadata: Metadata = {
     title: "GORENT — Drive Freedom",
     description: DESCRIPTION,
     locale: "id_ID",
-    images: [
-      {
-        url: "/og.png", // → public/og.png (1200×630)
-        width: 1200,
-        height: 630,
-        alt: "GORENT — Premium Car & Motorcycle Rental",
-      },
-    ],
+    // og:image di-generate otomatis oleh src/app/opengraph-image.tsx
   },
   twitter: {
     card: "summary_large_image",
     title: "GORENT — Drive Freedom",
     description: DESCRIPTION,
-    images: ["/og.png"],
+    // twitter:image fallback ke opengraph-image.tsx
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png", // → public/apple-touch-icon.png (180×180)
-  },
+  // Favicon & apple-touch di-generate otomatis oleh src/app/icon.tsx & apple-icon.tsx
   robots: {
     index: true,
     follow: true,
