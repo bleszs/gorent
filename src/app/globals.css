@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Design tokens (PRD color palette) ── */
+  --color-deep-slate: #0f172a;
+  --color-darker-slate: #111827;
+  --color-electric-blue: #3b82f6;
+  --color-luxury-gold: #d4af37;
+
+  /* ── Font utilities → dipetakan ke next/font variables (lihat layout.tsx) ── */
+  --font-display: var(--font-space-grotesk);
+  --font-body: var(--font-jakarta);
+  --font-ui: var(--font-inter);
+}
+
+/* Lenis yang pegang kendali scroll, bukan native smooth-scroll */
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
